@@ -8,18 +8,18 @@ public class CollectibleItem : MonoBehaviour
     public float bobHeight = 0.2f;
 
     private Vector3 startPosition;
+    private GameManager gameManager;
 
     void Start()
     {
         startPosition = transform.position;
+        gameManager = FindFirstObjectByType<GameManager>();
     }
 
     void Update()
     {
-        // Rotate so the collectible looks alive.
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
 
-        // Gently move up and down.
         float newY = startPosition.y + Mathf.Sin(Time.time * bobSpeed) * bobHeight;
         transform.position = new Vector3(startPosition.x, newY, startPosition.z);
     }
@@ -28,9 +28,11 @@ public class CollectibleItem : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Collected item: " + gameObject.name);
+            if (gameManager != null)
+            {
+                gameManager.AddCollectible(value);
+            }
 
-            // Later we will connect this to score and UI.
             Destroy(gameObject);
         }
     }
